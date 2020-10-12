@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funlife/models/onBoardingModel.dart';
+import 'package:funlife/screens/loginScreen.dart';
 import 'package:page_view_indicator/page_view_indicator.dart';
 
 class OnBoardingScreen extends StatefulWidget {
@@ -97,7 +98,9 @@ class _OnBoardingScreenState extends State<OnBoardingScreen> {
                     "Skip",
                     style: TextStyle(color: Colors.purple, fontSize: 16),
                   ),
-                  onPressed: () {},
+                  onPressed: () {
+                    Navigator.pushNamed(context, LoginScreen.id);
+                  },
                 ),
               ),
             ),
