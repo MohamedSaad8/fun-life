@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:funlife/apiServices/authentication.dart';
 import 'package:funlife/providers/login%20RegisterMode.dart';
 import 'package:funlife/widget/customTextFormFeild.dart';
 import 'package:provider/provider.dart';
@@ -13,6 +14,7 @@ class LoginScreen extends StatelessWidget {
   String password;
   String email;
   String confirmPassword;
+  Auth auth = Auth();
 
 //----------------------------------------------------------
   @override
@@ -32,8 +34,10 @@ class LoginScreen extends StatelessWidget {
                 appLogo(screenWidth, screenHeight, loginRegisterMode),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: loginRegisterAccountBox(
-                      screenWidth, screenHeight, loginRegisterMode),
+                  child: Builder(
+                    builder: (context) => loginRegisterAccountBox(
+                        screenWidth, screenHeight, loginRegisterMode, context),
+                  ),
                 ),
                 SizedBox(
                   height: screenHeight / 30,
@@ -51,7 +55,6 @@ class LoginScreen extends StatelessWidget {
                   onTap: () {
                     Provider.of<LoginRegisterMode>(context, listen: false)
                         .changeLoginRegisterMode();
-                    print(loginRegisterMode.toString());
                   },
                   child: Text(
                     loginRegisterMode ? "Register" : "Login",
@@ -70,8 +73,9 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  AnimatedContainer loginRegisterAccountBox(double screenWidth, double screenHeight, bool loginRegisterMode)
-  {
+  //-----------------------------------------------------
+  AnimatedContainer loginRegisterAccountBox(double screenWidth,
+      double screenHeight, bool loginRegisterMode, BuildContext context) {
     return AnimatedContainer(
       duration: Duration(milliseconds: 600),
       curve: Curves.easeInOutBack,
@@ -106,10 +110,9 @@ class LoginScreen extends StatelessWidget {
                         labelText: "User name",
                         icon: Icons.person,
                         obSecure: false,
-                        saveData:(value)
-                        {
+                        saveData: (value) {
                           userName = value;
-                        } ,
+                        },
                       )
                     : Container(),
                 //------------------
@@ -117,26 +120,22 @@ class LoginScreen extends StatelessWidget {
                   height: screenWidth / 43,
                 ),
                 CustomTextFormField(
-                  labelText: "Email address",
-                  icon: Icons.email,
-                  obSecure: false,
-                    saveData:(value)
-                    {
+                    labelText: "Email address",
+                    icon: Icons.email,
+                    obSecure: false,
+                    saveData: (value) {
                       email = value;
-                    }
-                ),
+                    }),
                 SizedBox(
                   height: screenWidth / 43,
                 ),
                 CustomTextFormField(
-                  labelText: "password",
-                  icon: Icons.lock,
-                  obSecure: true,
-                    saveData:(value)
-                    {
+                    labelText: "password",
+                    icon: Icons.lock,
+                    obSecure: true,
+                    saveData: (value) {
                       password = value;
-                    }
-                ),
+                    }),
                 SizedBox(
                   height:
                       loginRegisterMode ? screenWidth / 15 : screenWidth / 43,
@@ -147,21 +146,29 @@ class LoginScreen extends StatelessWidget {
                         icon: Icons.lock,
                         obSecure: true,
                         password: password,
-                    saveData:(value)
-                    {
-                      confirmPassword = value;
-                    }
-                )
+                        saveData: (value) {
+                          confirmPassword = value;
+                        })
                     : Container(),
                 SizedBox(
                   height: !loginRegisterMode ? 25 : 0,
                 ),
                 FlatButton(
                   color: Color(0xffDC3A6B),
-                  onPressed: () {
+                  onPressed: () async {
                     _globalKey.currentState.save();
-                    print(password);
-                    _globalKey.currentState.validate();
+                    if (_globalKey.currentState.validate()) {
+                      var response = loginRegisterMode
+                          ? await auth.userLogin(email, password)
+                          : await auth.userSignUp(email, password, userName);
+                      if (response != null) {
+                        Scaffold.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(response),
+                          ),
+                        );
+                      }
+                    }
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 60),
@@ -228,7 +235,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Stack appLogo(double screenWidth, double screenHeight, bool loginRegisterMode) {
+  Stack appLogo(
+      double screenWidth, double screenHeight, bool loginRegisterMode) {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
