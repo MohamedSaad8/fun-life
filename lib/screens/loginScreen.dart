@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funlife/providers/login%20RegisterMode.dart';
+import 'package:funlife/widget/customTextFormFeild.dart';
 import 'package:provider/provider.dart';
 
 //----------------------------------------------------------
@@ -8,19 +9,18 @@ import 'package:provider/provider.dart';
 class LoginScreen extends StatelessWidget {
   static String id = "LoginScreen";
   GlobalKey<FormState> _globalKey = GlobalKey<FormState>();
+  String userName;
+  String password;
+  String email;
+  String confirmPassword;
 
 //----------------------------------------------------------
   @override
   Widget build(BuildContext context) {
-    bool loginRegisterMode = Provider.of<LoginRegisterMode>(context).inLoginMode;
-    var screenWidth = MediaQuery
-        .of(context)
-        .size
-        .width;
-    var screenHeight = MediaQuery
-        .of(context)
-        .size
-        .height;
+    bool loginRegisterMode =
+        Provider.of<LoginRegisterMode>(context).inLoginMode;
+    var screenWidth = MediaQuery.of(context).size.width;
+    var screenHeight = MediaQuery.of(context).size.height;
     return Scaffold(
       backgroundColor: Color(0xffDC3A6B),
       body: Stack(
@@ -29,32 +29,37 @@ class LoginScreen extends StatelessWidget {
           SingleChildScrollView(
             child: Column(
               children: <Widget>[
-                appLogo(screenWidth, screenHeight , loginRegisterMode),
+                appLogo(screenWidth, screenHeight, loginRegisterMode),
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 50),
-                  child: loginRegisterAccountBox(screenWidth, screenHeight , loginRegisterMode),
+                  child: loginRegisterAccountBox(
+                      screenWidth, screenHeight, loginRegisterMode),
                 ),
                 SizedBox(
                   height: screenHeight / 30,
                 ),
                 Text(
-                  loginRegisterMode ?"Don\'t have an account ?" :"Already have account!",
+                  loginRegisterMode
+                      ? "Don\'t have an account ?"
+                      : "Already have account!",
                   style: TextStyle(color: Colors.black, fontSize: 18),
                 ),
                 SizedBox(
                   height: screenHeight / 50,
                 ),
                 GestureDetector(
-                  onTap: (){
-                    Provider.of<LoginRegisterMode>(context ,listen: false).changeLoginRegisterMode();
+                  onTap: () {
+                    Provider.of<LoginRegisterMode>(context, listen: false)
+                        .changeLoginRegisterMode();
                     print(loginRegisterMode.toString());
                   },
                   child: Text(
-                   loginRegisterMode? "Register" : "Login",
+                    loginRegisterMode ? "Register" : "Login",
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 18,
-                      fontWeight: FontWeight.bold,),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
               ],
@@ -65,7 +70,8 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  AnimatedContainer loginRegisterAccountBox(double screenWidth, double screenHeight , bool loginRegisterMode ) {
+  AnimatedContainer loginRegisterAccountBox(double screenWidth, double screenHeight, bool loginRegisterMode)
+  {
     return AnimatedContainer(
       duration: Duration(milliseconds: 600),
       curve: Curves.easeInOutBack,
@@ -83,97 +89,84 @@ class LoginScreen extends StatelessWidget {
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 25),
           child: Form(
+            key: _globalKey,
             child: Column(
               children: <Widget>[
                 Text(
                   loginRegisterMode ? "Login Account" : "SignUp Account",
                   style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
-                ) ,
-                !loginRegisterMode ? SizedBox(
-                  height: screenWidth / 30,
-                ) : Container(),
-                !loginRegisterMode ? TextFormField(
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(
-                      Icons.person,
-                      color: Color(0xffDC3A6B),
-                    ),
-                    labelText: "User name",
-                    labelStyle:
-                    TextStyle(color: Color(0xffDC3A6B), letterSpacing: 1.2),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffDC3A6B)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
-                ) :Container(),
+                ),
+                !loginRegisterMode
+                    ? SizedBox(
+                        height: screenWidth / 30,
+                      )
+                    : Container(),
+                !loginRegisterMode
+                    ? CustomTextFormField(
+                        labelText: "User name",
+                        icon: Icons.person,
+                        obSecure: false,
+                        saveData:(value)
+                        {
+                          userName = value;
+                        } ,
+                      )
+                    : Container(),
                 //------------------
                 SizedBox(
                   height: screenWidth / 43,
                 ),
-                TextFormField(
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(
-                      Icons.email,
-                      color: Color(0xffDC3A6B),
-                    ),
-                    labelText: "Email address",
-                    labelStyle:
-                    TextStyle(color: Color(0xffDC3A6B), letterSpacing: 1.2),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: BorderSide(color: Color(0xffDC3A6B)),
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                  ),
+                CustomTextFormField(
+                  labelText: "Email address",
+                  icon: Icons.email,
+                  obSecure: false,
+                    saveData:(value)
+                    {
+                      email = value;
+                    }
                 ),
                 SizedBox(
                   height: screenWidth / 43,
                 ),
-                TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(
-                      Icons.lock,
-                      color: Color(0xffDC3A6B),
-                    ),
-                    labelStyle:
-                    TextStyle(color: Color(0xffDC3A6B), letterSpacing: 1.2),
-                    labelText: "password",
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Color(0xffDC3A6B)),
-                    ),
-                  ),
+                CustomTextFormField(
+                  labelText: "password",
+                  icon: Icons.lock,
+                  obSecure: true,
+                    saveData:(value)
+                    {
+                      password = value;
+                    }
                 ),
                 SizedBox(
-                  height: loginRegisterMode? screenWidth / 15 : screenWidth / 43,
+                  height:
+                      loginRegisterMode ? screenWidth / 15 : screenWidth / 43,
                 ),
-                !loginRegisterMode ? TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    suffixIcon: Icon(
-                      Icons.lock,
-                      color: Color(0xffDC3A6B),
-                    ),
-                    labelStyle:
-                    TextStyle(color: Color(0xffDC3A6B), letterSpacing: 1.2),
-                    labelText: "confirm password",
-                    focusedBorder: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(20),
-                      borderSide: BorderSide(color: Color(0xffDC3A6B)),
-                    ),
-                  ),
-                ) : Container(),
-                SizedBox(height: !loginRegisterMode ? 25 : 0,),
+                !loginRegisterMode
+                    ? CustomTextFormField(
+                        labelText: "confirm password",
+                        icon: Icons.lock,
+                        obSecure: true,
+                        password: password,
+                    saveData:(value)
+                    {
+                      confirmPassword = value;
+                    }
+                )
+                    : Container(),
+                SizedBox(
+                  height: !loginRegisterMode ? 25 : 0,
+                ),
                 FlatButton(
                   color: Color(0xffDC3A6B),
                   onPressed: () {
-                    print(screenWidth);
+                    _globalKey.currentState.save();
+                    print(password);
+                    _globalKey.currentState.validate();
                   },
                   child: Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 60),
                     child: Text(
-                     loginRegisterMode? "LOGIN" : "Register",
+                      loginRegisterMode ? "LOGIN" : "Register",
                       style: TextStyle(color: Colors.white, letterSpacing: 1.2),
                     ),
                   ),
@@ -181,46 +174,52 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(
                   height: screenWidth / 30,
                 ),
-                loginRegisterMode ?Row(
-                  children: <Widget>[
-                    Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        height: 1,
-                      ),
-                    ),
-                    CircleAvatar(
-                      backgroundColor: Colors.grey[200],
-                      radius: 20,
-                      child: Text("OR"),
-                    ),
-                    Expanded(
-                      child: Divider(
-                        color: Colors.grey,
-                        height: 1,
-                      ),
-                    ),
-                  ],
-                ) : Container(),
-                loginRegisterMode ?SizedBox(
-                  height: 10,
-                ): Container(),
-                loginRegisterMode ?Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: <Widget>[
-                    Text(
-                      "Login With Facebook",
-                      style: TextStyle(color: Colors.blue),
-                    ),
-                    SizedBox(
-                      width: 5,
-                    ),
-                    Text(
-                      "Login With Google",
-                      style: TextStyle(color: Colors.red),
-                    ),
-                  ],
-                ): Container(),
+                loginRegisterMode
+                    ? Row(
+                        children: <Widget>[
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ),
+                          CircleAvatar(
+                            backgroundColor: Colors.grey[200],
+                            radius: 20,
+                            child: Text("OR"),
+                          ),
+                          Expanded(
+                            child: Divider(
+                              color: Colors.grey,
+                              height: 1,
+                            ),
+                          ),
+                        ],
+                      )
+                    : Container(),
+                loginRegisterMode
+                    ? SizedBox(
+                        height: 10,
+                      )
+                    : Container(),
+                loginRegisterMode
+                    ? Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                        children: <Widget>[
+                          Text(
+                            "Login With Facebook",
+                            style: TextStyle(color: Colors.blue),
+                          ),
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Text(
+                            "Login With Google",
+                            style: TextStyle(color: Colors.red),
+                          ),
+                        ],
+                      )
+                    : Container(),
               ],
             ),
           ),
@@ -229,7 +228,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  Stack appLogo(double screenWidth, double screenHeight , bool loginRegisterMode) {
+  Stack appLogo(double screenWidth, double screenHeight, bool loginRegisterMode) {
     return Stack(
       alignment: Alignment.center,
       children: <Widget>[
@@ -246,7 +245,9 @@ class LoginScreen extends StatelessWidget {
         ),
         Positioned(
           child: Text(
-            loginRegisterMode ? "Fill The Bellow Informations To Login" : "Fill The Bellow Informations To Register",
+            loginRegisterMode
+                ? "Fill The Bellow Informations To Login"
+                : "Fill The Bellow Informations To Register",
             style: TextStyle(
                 fontSize: 18,
                 // fontFamily: "Cairo",
