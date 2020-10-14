@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:funlife/providers/login%20RegisterMode.dart';
+import 'package:funlife/screens/funLiveMainScreen.dart';
 import 'package:funlife/screens/loginScreen.dart';
 import 'package:funlife/screens/onBoardingScreen.dart';
 import 'package:provider/provider.dart';
@@ -20,7 +21,8 @@ class FunLife extends StatelessWidget {
         initialRoute: OnBoardingScreen.id,
         routes: {
           OnBoardingScreen.id : (context) => OnBoardingScreen(),
-          LoginScreen.id : (context) => LoginScreen()
+          LoginScreen.id : (context) => LoginScreen(),
+          FunLifeMainScreen.id : (context) => FunLifeMainScreen()
         },
       ),
     );

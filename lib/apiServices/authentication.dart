@@ -1,5 +1,4 @@
 import 'dart:convert';
-
 import 'package:funlife/constants.dart';
 import 'package:funlife/models/userModel.dart';
 import 'package:http/http.dart' as http;

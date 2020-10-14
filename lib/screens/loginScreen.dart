@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:funlife/apiServices/authentication.dart';
 import 'package:funlife/providers/login%20RegisterMode.dart';
+import 'package:funlife/screens/funLiveMainScreen.dart';
 import 'package:funlife/widget/customTextFormFeild.dart';
 import 'package:provider/provider.dart';
 
@@ -167,6 +168,9 @@ class LoginScreen extends StatelessWidget {
                             content: Text(response),
                           ),
                         );
+                      }
+                      else{
+                        Navigator.pushNamed(context, FunLifeMainScreen.id);
                       }
                     }
                   },
