@@ -54,7 +54,6 @@ class UserProfileScreen extends StatelessWidget {
                       FlatButton(
                         onPressed: () {
                           Navigator.pushNamed(context, LoginScreen.id);
-                          User.currentUser = null;
                         },
                         child: Text(
                           "Yes",
@@ -86,46 +85,62 @@ class UserProfileScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: ListView.builder(
-              itemBuilder: (context, index) {
-                if (index == 0) {
-                  return Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      userStateUI(screenWidth, provider, context),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      userInformationUI(
-                          screenWidth, _style1, context, provider),
-                      SizedBox(
-                        height: 10,
-                      ),
-                      userBio(screenWidth, provider, context),
-                    ],
-                  );
-                }
-                if (index == 1) {
-                  return subTitle(screenWidth, screenHeight, _style1, "Posts");
-                }
-                return Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 10),
-                  child: Container(
-                    color: Colors.white,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: <Widget>[
-                        postImageUI(screenWidth, context),
-                        postContentUI(),
-                        likeCommentButtonsUI(),
-                      ],
+              child: ListView.builder(
+            itemBuilder: (context, index) {
+              if (index == 0) {
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    userStateUI(screenWidth, provider, context),
+                    SizedBox(
+                      height: 10,
                     ),
-                  ),
+                    userInformationUI(screenWidth, _style1, context, provider),
+                    SizedBox(
+                      height: 10,
+                    ),
+                    userBio(screenWidth, provider, context),
+                  ],
                 );
-              },
-              itemCount: 10,
-            ),
-          ),
+              }
+              if (index == 1) {
+                return subTitle(screenWidth, screenHeight, _style1, "Posts");
+              }
+              return User.currentUser.userPosts.length > 0
+                  ? Padding(
+                      padding: const EdgeInsets.symmetric(vertical: 10),
+                      child: Container(
+                        color: Colors.white,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: <Widget>[
+                            postImageUI(
+                                screenWidth,
+                                context,
+                                User.currentUser.userPosts[index - 2]
+                                    .postImageURL),
+                            postContentUI(User
+                                .currentUser.userPosts[index - 2].postContent),
+                            likeCommentButtonsUI(),
+                          ],
+                        ),
+                      ),
+                    )
+                  : Container(
+                      height: screenWidth,
+                      child: Center(
+                        child: Text(
+                          "No Posts till now",
+                          style: TextStyle(
+                              fontSize: 22, fontWeight: FontWeight.bold),
+                        ),
+                      ),
+                    );
+            },
+            itemCount: User.currentUser.userPosts.length == 0
+                ? 3
+                : User.currentUser.userPosts.length + 2,
+          ),),
           SizedBox(
             height: 46,
           ),
@@ -134,29 +149,32 @@ class UserProfileScreen extends StatelessWidget {
     );
   }
 
-  InkWell postImageUI(double screenWidth, context) {
+  InkWell postImageUI(double screenWidth, context, String imageURL) {
     return InkWell(
       onTap: () {},
-      child: Container(
-        width: screenWidth,
-        height: screenWidth / 2,
-        child: Image.asset(
-          "images/Happy.png",
-          fit: BoxFit.fill,
-        ),
-      ),
+      child: ConstrainedBox(
+          constraints:
+              BoxConstraints(minWidth: screenWidth, minHeight: screenWidth / 2),
+          child: imageURL == null
+              ? Container()
+              : Image(
+                  image: NetworkImage(imageURL),
+                  fit: BoxFit.cover,
+                )),
     );
   }
 
-  Padding postContentUI() {
+  Padding postContentUI(String postContent) {
     return Padding(
       padding: EdgeInsets.symmetric(vertical: 15, horizontal: 10),
       child: Wrap(
         children: <Widget>[
-          Text(
-            "my name is mohamed saad shata my name is mohamed saad shata my name is mohamed saad shata my name is mohamed saad shata",
-            style: TextStyle(fontSize: 15, letterSpacing: 1.4),
-          ),
+          postContent == null
+              ? Container()
+              : Text(
+                  postContent,
+                  style: TextStyle(fontSize: 15, letterSpacing: 1.4),
+                ),
         ],
       ),
     );
@@ -323,7 +341,7 @@ class UserProfileScreen extends StatelessWidget {
         ),
         Column(
           children: <Widget>[
-            Text("100", style: _style1),
+            Text(User.currentUser.userPosts.length == null ? "0" : User.currentUser.userPosts.length.toString(), style: _style1),
             SizedBox(
               height: 5,
             ),
@@ -332,7 +350,11 @@ class UserProfileScreen extends StatelessWidget {
         ),
         Column(
           children: <Widget>[
-            Text("100", style: _style1),
+            Text(
+                User.currentUser.followers.length == null
+                    ? "0"
+                    : User.currentUser.followers.length.toString(),
+                style: _style1),
             SizedBox(
               height: 5,
             ),
@@ -341,7 +363,11 @@ class UserProfileScreen extends StatelessWidget {
         ),
         Column(
           children: <Widget>[
-            Text("100", style: _style1),
+            Text(
+                User.currentUser.following.length == null
+                     ? "0"
+                    : User.currentUser.following.length.toString(),
+                style: _style1),
             SizedBox(
               height: 5,
             ),
