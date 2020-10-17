@@ -5,6 +5,8 @@ import 'package:funlife/providers/login%20RegisterMode.dart';
 import 'package:funlife/screens/funLiveMainScreen.dart';
 import 'package:funlife/widget/customTextFormFeild.dart';
 import 'package:provider/provider.dart';
+import 'package:image_picker/image_picker.dart';
+import 'dart:io';
 
 //----------------------------------------------------------
 // ignore: must_be_immutable
@@ -16,6 +18,8 @@ class LoginScreen extends StatelessWidget {
   String email;
   String confirmPassword;
   Auth auth = Auth();
+  File userProfileImageFile ;
+  final picker = ImagePicker();
 
 //----------------------------------------------------------
   @override

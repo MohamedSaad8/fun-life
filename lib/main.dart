@@ -3,9 +3,12 @@ import 'package:funlife/providers/login%20RegisterMode.dart';
 import 'package:funlife/screens/funLiveMainScreen.dart';
 import 'package:funlife/screens/loginScreen.dart';
 import 'package:funlife/screens/onBoardingScreen.dart';
+import 'package:funlife/testUploadImage.dart';
 import 'package:provider/provider.dart';
 
-void main() => runApp(FunLife());
+import 'providers/userProfileData.dart';
+
+void main() => runApp(FunLife(),);
 
 class FunLife extends StatelessWidget {
   // This widget is the root of your application.
@@ -16,10 +19,14 @@ class FunLife extends StatelessWidget {
         ChangeNotifierProvider<LoginRegisterMode>(
           create: (context) => LoginRegisterMode(),
         ),
+        ChangeNotifierProvider<UserProfileData>(
+          create: (context) => UserProfileData(),
+        ),
       ],
       child: MaterialApp(
-        initialRoute: OnBoardingScreen.id,
+        initialRoute: LoginScreen.id,
         routes: {
+          UploadImage.id : (context) => UploadImage(),
           OnBoardingScreen.id : (context) => OnBoardingScreen(),
           LoginScreen.id : (context) => LoginScreen(),
           FunLifeMainScreen.id : (context) => FunLifeMainScreen()

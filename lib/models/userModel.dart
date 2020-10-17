@@ -7,11 +7,12 @@ class User
   String userToken ;
   String userState;
   String userBio;
+  String userProfileImageUrL;
   DateTime userBirthDate;
   static User currentUser;
 
   User({this.userID, this.email, this.userName, this.password, this.userToken,
-      this.userState, this.userBio, this.userBirthDate});
+      this.userState, this.userBio, this.userBirthDate, this.userProfileImageUrL});
 
 
 }

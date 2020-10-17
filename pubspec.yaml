@@ -18,6 +18,8 @@ environment:
 
 dependencies:
   http: ^0.12.2
+  dio:
+  image_picker:
   persistent_bottom_nav_bar: any
   provider:
   page_view_indicator:
