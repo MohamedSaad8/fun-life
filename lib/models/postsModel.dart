@@ -5,7 +5,7 @@ class Post
 {
   int postID ;
   String postContent ;
-  User postUser;
+  int postUser;
   String postImageURL ;
   List<Comment> postComments ;
 

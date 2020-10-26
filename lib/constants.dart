@@ -5,5 +5,6 @@ const signUpURL = "http://192.168.1.9:1337/auth/local/register";
 const usersURL = "http://192.168.1.9:1337/users";
 const baseURL = "http://192.168.1.9:1337" ;
 const uploadsURL  = "http://192.168.1.9:1337/upload";
+const postsURl = "http://192.168.1.9:1337/posts";
 const kMainColor = Color(0xffDC3A6B);
 const kPageColor = Color(0xffFAFAFA);

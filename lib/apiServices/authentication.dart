@@ -18,7 +18,8 @@ class Auth {
         Post newPost = Post(
             postID: post["id"],
             postContent: post["postContent"],
-            postImageURL: baseURL + post["postImage"]["url"]);
+            postImageURL: post["postImage"] == null ? null : baseURL + post["postImage"]["url"]
+        );
         userPosts.add(newPost);
       }
       for (var follower in currentUserInfo["user"]["follower"]) {
@@ -42,7 +43,7 @@ class Auth {
           userBio: currentUserInfo["user"]["userBio"],
           userProfileImageUrL: currentUserInfo["user"]["profileImage"] == null
               ? null
-              : currentUserInfo["user"]["profileImage"]["url"],
+              : baseURL + currentUserInfo["user"]["profileImage"]["url"],
           userPosts: userPosts,
           followers: followersList,
           following: followingList);

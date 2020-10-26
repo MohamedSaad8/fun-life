@@ -7,6 +7,7 @@ import 'package:funlife/constants.dart';
 import 'package:funlife/models/userModel.dart';
 import 'package:funlife/screens/loginScreen.dart';
 import 'package:funlife/sharedMethods/getImages.dart';
+import 'package:funlife/sharedMethods/showDialogForImages.dart';
 import 'package:provider/provider.dart';
 
 //-----------------------------------------------------------
@@ -85,62 +86,64 @@ class UserProfileScreen extends StatelessWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-              child: ListView.builder(
-            itemBuilder: (context, index) {
-              if (index == 0) {
-                return Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: <Widget>[
-                    userStateUI(screenWidth, provider, context),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    userInformationUI(screenWidth, _style1, context, provider),
-                    SizedBox(
-                      height: 10,
-                    ),
-                    userBio(screenWidth, provider, context),
-                  ],
-                );
-              }
-              if (index == 1) {
-                return subTitle(screenWidth, screenHeight, _style1, "Posts");
-              }
-              return User.currentUser.userPosts.length > 0
-                  ? Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 10),
-                      child: Container(
-                        color: Colors.white,
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            postImageUI(
-                                screenWidth,
-                                context,
-                                User.currentUser.userPosts[index - 2]
-                                    .postImageURL),
-                            postContentUI(User
-                                .currentUser.userPosts[index - 2].postContent),
-                            likeCommentButtonsUI(),
-                          ],
-                        ),
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                if (index == 0) {
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      userStateUI(screenWidth, provider, context),
+                      SizedBox(
+                        height: 10,
                       ),
-                    )
-                  : Container(
-                      height: screenWidth,
-                      child: Center(
-                        child: Text(
-                          "No Posts till now",
-                          style: TextStyle(
-                              fontSize: 22, fontWeight: FontWeight.bold),
-                        ),
+                      userInformationUI(
+                          screenWidth, _style1, context, provider),
+                      SizedBox(
+                        height: 10,
                       ),
-                    );
-            },
-            itemCount: User.currentUser.userPosts.length == 0
-                ? 3
-                : User.currentUser.userPosts.length + 2,
-          ),),
+                      userBio(screenWidth, provider, context),
+                    ],
+                  );
+                }
+                if (index == 1) {
+                  return subTitle(screenWidth, screenHeight, _style1, "Posts");
+                }
+                return User.currentUser.userPosts.length > 0
+                    ? Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        child: Container(
+                          color: Colors.white,
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              postImageUI(
+                                  screenWidth,
+                                  context,
+                                  User.currentUser.userPosts[index - 2]
+                                      .postImageURL),
+                              postContentUI(User.currentUser
+                                  .userPosts[index - 2].postContent),
+                              likeCommentButtonsUI(),
+                            ],
+                          ),
+                        ),
+                      )
+                    : Container(
+                        height: screenWidth,
+                        child: Center(
+                          child: Text(
+                            "No Posts till now",
+                            style: TextStyle(
+                                fontSize: 22, fontWeight: FontWeight.bold),
+                          ),
+                        ),
+                      );
+              },
+              itemCount: User.currentUser.userPosts.length == 0
+                  ? 3
+                  : User.currentUser.userPosts.length + 2,
+            ),
+          ),
           SizedBox(
             height: 46,
           ),
@@ -153,14 +156,15 @@ class UserProfileScreen extends StatelessWidget {
     return InkWell(
       onTap: () {},
       child: ConstrainedBox(
-          constraints:
-              BoxConstraints(minWidth: screenWidth, minHeight: screenWidth / 2),
-          child: imageURL == null
-              ? Container()
-              : Image(
-                  image: NetworkImage(imageURL),
-                  fit: BoxFit.cover,
-                )),
+        constraints:
+            BoxConstraints(minWidth: screenWidth, minHeight: screenWidth / 15),
+        child: imageURL == null
+            ? Container()
+            : Image(
+                image: NetworkImage(imageURL),
+                fit: BoxFit.cover,
+              ),
+      ),
     );
   }
 
@@ -279,44 +283,23 @@ class UserProfileScreen extends StatelessWidget {
           children: <Widget>[
             GestureDetector(
               onLongPress: () {
-                showDialog(
-                    context: context,
-                    builder: (context) {
-                      return AlertDialog(
-                        content: Text("Update Profile Image"),
-                        actions: <Widget>[
-                          FlatButton(
-                            color: kMainColor,
-                            child: Text("From Camera"),
-                            onPressed: () async {
-                              userProfileImageFile =
-                                  File(await getImageFromCamera());
-                              provider.uploadToDataBase(User.currentUser.userID,
-                                  userProfileImageFile);
-                              Navigator.pop(context);
-                            },
-                          ),
-                          FlatButton(
-                            color: kMainColor,
-                            child: Text("From Gallery"),
-                            onPressed: () async {
-                              userProfileImageFile =
-                                  File(await getImageFromGallery());
-                              Navigator.pop(context);
-                              provider.uploadToDataBase(User.currentUser.userID,
-                                  userProfileImageFile);
-                            },
-                          ),
-                          FlatButton(
-                            color: Colors.red,
-                            child: Text("Cancel"),
-                            onPressed: () {
-                              Navigator.pop(context);
-                            },
-                          ),
-                        ],
-                      );
-                    });
+                showDialogForChoseImages(
+                  context: context,
+                  camera: () async {
+                    userProfileImageFile = File(await getImageFromCamera());
+                    provider.uploadToDataBase(
+                        userID: User.currentUser.userID,
+                        imageFile: userProfileImageFile,
+                        field: "profileImage",
+                        ref: "user",
+                        mode: 1);
+                  },
+                  gallery: () async {
+                    userProfileImageFile = File(await getImageFromGallery());
+                    provider.uploadToDataBase(User.currentUser.userID,
+                        userProfileImageFile, "user", "profileImage");
+                  },
+                );
               },
               child: CircleAvatar(
                 backgroundColor: kMainColor,
@@ -341,7 +324,11 @@ class UserProfileScreen extends StatelessWidget {
         ),
         Column(
           children: <Widget>[
-            Text(User.currentUser.userPosts.length == null ? "0" : User.currentUser.userPosts.length.toString(), style: _style1),
+            Text(
+                User.currentUser.userPosts.length == null
+                    ? "0"
+                    : User.currentUser.userPosts.length.toString(),
+                style: _style1),
             SizedBox(
               height: 5,
             ),
@@ -365,7 +352,7 @@ class UserProfileScreen extends StatelessWidget {
           children: <Widget>[
             Text(
                 User.currentUser.following.length == null
-                     ? "0"
+                    ? "0"
                     : User.currentUser.following.length.toString(),
                 style: _style1),
             SizedBox(
