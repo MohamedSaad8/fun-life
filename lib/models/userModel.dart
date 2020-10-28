@@ -13,6 +13,7 @@ class User {
   List<Post> userPosts;
   List<User> followers;
   List<User> following;
+  String currentPostImageUrl ;
   static User currentUser;
 
   User(
@@ -25,6 +26,7 @@ class User {
       this.userBio,
       this.userBirthDate,
       this.userProfileImageUrL,
+        this.currentPostImageUrl,
       this.userPosts,
       this.followers,
       this.following});

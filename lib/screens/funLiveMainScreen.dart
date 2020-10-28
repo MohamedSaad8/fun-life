@@ -28,7 +28,7 @@ class _FunLifeMainScreenState extends State<FunLifeMainScreen> {
         screens: _buildScreens(),
         items: _navBarsItems(),
         confineInSafeArea: true,
-        backgroundColor: Colors.grey[200],
+        backgroundColor: Colors.white,
         handleAndroidBackButtonPress: true,
         resizeToAvoidBottomInset: true, // This needs to be true if you want to move up the screen when keyboard appears.
         stateManagement: true,

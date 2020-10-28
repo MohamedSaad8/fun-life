@@ -8,7 +8,6 @@ import 'package:http/http.dart' as http;
 
 class UserProfileData extends ChangeNotifier {
   int postID;
-  String URl;
 
   updateUserState(int userID, String state) async {
     Map<String, String> userState = {"userState": "$state"};
@@ -67,23 +66,18 @@ class UserProfileData extends ChangeNotifier {
           notifyListeners();
         }
         if (mode == 2) {
-          print("mohaemd saad");
-          var res = await response.stream.bytesToString();
-          print("saad");
-          var resBody = jsonDecode(res);
-          print("shata");
-          URl = baseURL + resBody[0]["url"];
-          print(URl);
-         // notifyListeners();
+          var getUrl = await http.get(postsURl + "/$postID");
+          var data = jsonDecode(getUrl.body);
+          for (var post in User.currentUser.userPosts) {
+            if (post.postID == postID) {
+              post.postImageURL = baseURL + data["postImage"]["url"];
+            }
+          }
+          notifyListeners();
         }
-        // var r =  await response.stream.bytesToString();
-        // var j = jsonDecode(r);
-        //url = j["name"];
-        //  print(j);
-
       }
       print(response.statusCode);
-    }).catchError((e) => print(e));
+    }).catchError((e) => print("post not found"));
   }
 
   uploadPost(String postContent, int userID, File image, provider) async {
@@ -91,29 +85,28 @@ class UserProfileData extends ChangeNotifier {
       "postContent": postContent,
       "users_permissions_user": "$userID"
     };
-
     var response = await http.post(postsURl, body: data);
     if (response.statusCode == 200) {
       print("Done");
       var responseBody = jsonDecode(response.body);
       postID = responseBody["id"];
-      provider.uploadToDataBase(
-          ref: "post",
-          mode: 2,
-          field: "postImage",
-          userID: postID,
-          imageFile: image);
-      print("url is  $URl");
       Post post = Post(
-          postContent: postContent,
-          postUser: User.currentUser.userID,
-          postID: responseBody["id"],
-          postImageURL: URl);
-      URl = null;
+        postContent: postContent,
+        postUser: User.currentUser.userID,
+        postID: responseBody["id"],
+      );
       User.currentUser.userPosts.add(post);
       notifyListeners();
       return postID;
     } else
       print(response.statusCode.toString());
+  }
+
+  deletePost(int postID, int index) async {
+    var response = await http.delete(postsURl + "/$postID");
+    if (response.statusCode == 200) {
+      User.currentUser.userPosts.removeAt(index);
+      notifyListeners();
+    }
   }
 }

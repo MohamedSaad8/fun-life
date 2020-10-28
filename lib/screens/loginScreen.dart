@@ -18,7 +18,7 @@ class LoginScreen extends StatelessWidget {
   String email;
   String confirmPassword;
   Auth auth = Auth();
-  File userProfileImageFile ;
+  File userProfileImageFile;
   final picker = ImagePicker();
 
 //----------------------------------------------------------
@@ -172,8 +172,7 @@ class LoginScreen extends StatelessWidget {
                             content: Text(response),
                           ),
                         );
-                      }
-                      else{
+                      } else {
                         Navigator.pushNamed(context, FunLifeMainScreen.id);
                       }
                     }

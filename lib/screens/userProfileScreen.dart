@@ -27,7 +27,7 @@ class UserProfileScreen extends StatelessWidget {
     //------------------------------------------------------
     TextStyle _style1 = TextStyle(fontWeight: FontWeight.bold, fontSize: 18);
     return Scaffold(
-      backgroundColor: Colors.grey[200],
+      backgroundColor: Colors.grey[300],
       appBar: AppBar(
         iconTheme: IconThemeData(
           color: kMainColor,
@@ -110,19 +110,104 @@ class UserProfileScreen extends StatelessWidget {
                 }
                 return User.currentUser.userPosts.length > 0
                     ? Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 10),
+                        padding: const EdgeInsets.symmetric(vertical: 5),
                         child: Container(
                           color: Colors.white,
                           child: Column(
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: <Widget>[
-                              postImageUI(
-                                  screenWidth,
-                                  context,
-                                  User.currentUser.userPosts[index - 2]
-                                      .postImageURL),
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: <Widget>[
+                                    Row(
+                                      children: <Widget>[
+                                        CircleAvatar(
+                                          radius: 20,
+                                          backgroundImage: NetworkImage(User
+                                              .currentUser.userProfileImageUrL),
+                                        ),
+                                        SizedBox(
+                                          width: 5,
+                                        ),
+                                        Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.start,
+                                          children: <Widget>[
+                                            Text(
+                                              User.currentUser.userName,
+                                              style: TextStyle(
+                                                  fontWeight: FontWeight.bold),
+                                            ),
+                                            SizedBox(
+                                              height: 3,
+                                            ),
+                                            Text(
+                                              "Publish from android",
+                                              style: TextStyle(
+                                                  color: Colors.grey[500],
+                                                  fontSize: 12),
+                                            ),
+                                          ],
+                                        )
+                                      ],
+                                    ),
+                                    IconButton(
+                                      onPressed: () {
+                                        showDialog(
+                                            context: context,
+                                            builder: (context) {
+                                              return AlertDialog(
+                                                content: Text(
+                                                    "Are You Sure To Delete This Post"),
+                                                actions: <Widget>[
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      var postID = User
+                                                          .currentUser
+                                                          .userPosts[index - 2]
+                                                          .postID;
+                                                      provider.deletePost(
+                                                          postID, index - 2);
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("Yes"),
+                                                    color: kMainColor,
+                                                    textColor: Colors.white,
+                                                  ),
+                                                  FlatButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text("Cancel"),
+                                                    color: kMainColor,
+                                                    textColor: Colors.white,
+                                                  )
+                                                ],
+                                              );
+                                            });
+                                      },
+                                      icon: Icon(
+                                        Icons.delete_outline,
+                                        color: Colors.grey,
+                                      ),
+                                    )
+                                  ],
+                                ),
+                              ),
                               postContentUI(User.currentUser
                                   .userPosts[index - 2].postContent),
+                              User.currentUser.userPosts[index - 2]
+                                          .postImageURL !=
+                                      null
+                                  ? postImageUI(
+                                      screenWidth,
+                                      context,
+                                      User.currentUser.userPosts[index - 2]
+                                          .postImageURL)
+                                  : Container(),
                               likeCommentButtonsUI(),
                             ],
                           ),
@@ -192,13 +277,26 @@ class UserProfileScreen extends StatelessWidget {
             onTap: () {},
             child: Container(
               height: 50,
-              child: Center(
-                child: Icon(Icons.thumb_up),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Like",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.thumb_up,
+                    color: Colors.grey,
+                  ),
+                ],
               ),
               decoration: BoxDecoration(
                 border: Border(
-                  top: BorderSide(color: kMainColor),
-                  right: BorderSide(color: kMainColor),
+                  top: BorderSide(color: Colors.grey),
+                  right: BorderSide(color: Colors.grey),
                   bottom: BorderSide(color: Colors.grey),
                 ),
               ),
@@ -210,12 +308,25 @@ class UserProfileScreen extends StatelessWidget {
             onTap: () {},
             child: Container(
               height: 50,
-              child: Center(
-                child: Icon(Icons.comment),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: <Widget>[
+                  Text(
+                    "Comment",
+                    style: TextStyle(color: Colors.grey),
+                  ),
+                  SizedBox(
+                    width: 5,
+                  ),
+                  Icon(
+                    Icons.comment,
+                    color: Colors.grey,
+                  ),
+                ],
               ),
               decoration: BoxDecoration(
                 border: Border(
-                    top: BorderSide(color: kMainColor),
+                    top: BorderSide(color: Colors.grey),
                     bottom: BorderSide(color: Colors.grey)),
               ),
             ),
@@ -287,7 +398,7 @@ class UserProfileScreen extends StatelessWidget {
                   context: context,
                   camera: () async {
                     userProfileImageFile = File(await getImageFromCamera());
-                    provider.uploadToDataBase(
+                    await provider.uploadToDataBase(
                         userID: User.currentUser.userID,
                         imageFile: userProfileImageFile,
                         field: "profileImage",
@@ -296,8 +407,12 @@ class UserProfileScreen extends StatelessWidget {
                   },
                   gallery: () async {
                     userProfileImageFile = File(await getImageFromGallery());
-                    provider.uploadToDataBase(User.currentUser.userID,
-                        userProfileImageFile, "user", "profileImage");
+                    await provider.uploadToDataBase(
+                        userID: User.currentUser.userID,
+                        imageFile: userProfileImageFile,
+                        field: "profileImage",
+                        ref: "user",
+                        mode: 1);
                   },
                 );
               },
